@@ -1,20 +1,38 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 ## Making sure of the Library Load.
-```{r}
+
+```r
 library(knitr)
+```
+
+```
+## Warning: package 'knitr' was built under R version 3.1.3
+```
+
+```r
 library(ggplot2)#needed for plots
+```
+
+```
+## Warning: package 'ggplot2' was built under R version 3.1.3
+```
+
+```r
 library(scales) #needed for plots
+```
+
+```
+## Warning: package 'scales' was built under R version 3.1.3
+```
+
+```r
 opts_chunk$set(echo = TRUE)
 ```
 
 ## Loading and preprocessing the data
 We'll be downloading data, unzipping it and reading as CSV.
-```{r}
+
+```r
 ## Load data
 url <- "http://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
 tempFile <- tempfile()
@@ -31,23 +49,41 @@ actData$interval <- as.numeric(actData$interval)
 # Check the first 5 rows of the data before processing the data for the project.
 
 This step allows us to evaluate the first five initial rows of data in the Actity data set.
-```{r}
 
+```r
 SamData <- head(actData,5)
 SamData
+```
+
+```
+##   steps       date interval
+## 1    NA 2012-10-01        0
+## 2    NA 2012-10-01        5
+## 3    NA 2012-10-01       10
+## 4    NA 2012-10-01       15
+## 5    NA 2012-10-01       20
 ```
 ## What is mean total number of steps taken per day?
 We'll aggregate sums of steps, save them into a separate data frame factored by date  
   1. Calculate the total Number of steps taken per day.
-```{r}
+
+```r
 ## Aggregate sums of steps per each day into a different data frame
 actDataByMonth <- aggregate(actData$steps, by = list(actData$date),FUN = sum, na.rm = TRUE)
 ## Set names for columns
 names(actDataByMonth) <- c("date", "steps")
 head(actDataByMonth,3)
 ```
+
+```
+##         date steps
+## 1 2012-10-01     0
+## 2 2012-10-02   126
+## 3 2012-10-03 11352
+```
   2. Make a histogram of the total number of steps taken each day
-```{r}
+
+```r
 ## Making a histogram of the total number of steps taken each day
 ggplot(actDataByMonth, aes(x = date, y = steps)) + 
     geom_bar(stat = "identity", fill = "lightblue", color="black", binwidth = 2000) + 
@@ -58,21 +94,34 @@ ggplot(actDataByMonth, aes(x = date, y = steps)) +
     geom_line(stat="hline", yintercept=median, linetype="dashed")
 ```
 
+![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+
   3. Calculate and report the mean and median total number of steps taken per day.  
 Mean of total number of steps taken per day. Also visible on the graph as dotted line.
-```{r}
+
+```r
 mean(actDataByMonth$steps)
 ```
+
+```
+## [1] 9354.23
+```
   Median of total number of steps taken per day, presented as a dashed line on the graph.
-```{r}
+
+```r
 median(actDataByMonth$steps)
+```
+
+```
+## [1] 10395
 ```
 ## What is the average daily activity pattern?
 
   1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
      We'll start by aggregating means of steps taken factored by Intervals with empty values dropped.
-```{r}
+
+```r
 ## Aggregate Average Steps by Interval
 actDataByInterval <- aggregate(actData$steps, by = list(actData$interval),FUN = mean, na.rm = TRUE)
 
@@ -81,47 +130,65 @@ names(actDataByInterval) <- c("interval","steps")
 ```
 
    Then we build a plot using ggplot
-```{r}
+
+```r
 ## Plot Time Series of Average Steps by Interval
 ggplot(actDataByInterval, aes(x = interval, y = steps)) + 
     geom_line(color = "darkgreen") + 
     labs(title = "Average (mean) number of steps by Interval", x = "Interval", y = "Number of steps")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
  
  2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-```{r}
+
+```r
 ## Find the Index of the Max Average Steps
 maxSteps <- which.max(actDataByInterval$steps)
 ```
    And here's the Interval which contains the maximum number of steps.
-```{r}
+
+```r
 ## Return Data for Max Average Steps Interval
 actDataByInterval[maxSteps, ]
 ```
 
+```
+##     interval    steps
+## 104      835 206.1698
+```
+
 ## Imputing missing values
 1. Calculate and report the total number of missing values in the dataset.
-```{r}
+
+```r
 ## Check if steps is NA and save an index if it is
 missingValues <- which(is.na(actData$steps))
 
 ## Report number of missing values
 length(missingValues)
 ```
+
+```
+## [1] 2304
+```
 2. & 3. Questions.
 Then we copy a dataset into a placeholder that, is used for filling in for missing values
-```{r}
+
+```r
 actFullData <- actData
 ```
 Next we'll iterate through the dataset in a loop and replace each value with a mean for that  5-minute interval as previously calculated.
-```{r}
+
+```r
 ## Replace missing values with mean for corresponding interval
 for(i in missingValues) {
     actFullData$steps[i] <- actDataByInterval[which(actDataByInterval$interval == actFullData[i, "interval"]), "steps"]
 }
 ```
 Now we'll re-calculate the aggreate number of steps per day.
-```{r}
+
+```r
 ## aggregate sums of steps per each day into a different data frame
 actFullDataByMonth <- aggregate(actFullData$steps, by = list(actFullData$date),
                             FUN = sum, na.rm = TRUE)
@@ -129,7 +196,8 @@ actFullDataByMonth <- aggregate(actFullData$steps, by = list(actFullData$date),
 names(actFullDataByMonth) <- c("date", "steps")
 ```
  4. Make a histogram of the total number of steps taken each day
-```{r}
+
+```r
 ## Making a histogram of the total number of steps taken each day
 ggplot(actFullDataByMonth, aes(x = date, y = steps)) + 
     geom_bar(stat = "identity", fill = "lightblue", color="black", binwidth = 2000) + 
@@ -139,15 +207,27 @@ ggplot(actFullDataByMonth, aes(x = date, y = steps)) +
     geom_line(stat="hline", yintercept=mean, linetype="dotted") +
     geom_line(stat="hline", yintercept=median, linetype="dashed")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-16-1.png) 
     
     Calculate and report the mean and median total number of steps taken per day
     Mean of total number of steps taken per day.
-```{r}
+
+```r
 mean(actFullDataByMonth$steps)
 ```
+
+```
+## [1] 10766.19
+```
     Median of total number of steps taken per day.
-```{r}
+
+```r
 median(actFullDataByMonth$steps)
+```
+
+```
+## [1] 10766.19
 ```
    These number do indeed differ from estimation based on the original dataset with missing values. It only makes sense then sums of daily steps taken added to the dataset are driving the overall mean and median up. Also interesting to note that effect on the days that tracked lower than average number of steps was greater then on those that tracked higher than average number of steps.
 
@@ -155,11 +235,13 @@ median(actFullDataByMonth$steps)
 ## Are there differences in activity patterns between weekdays and weekends?
 1, Create a new factor variable, as boolean 
    First we transform the full dataset to include a new boolean factor variable. weekend is TRUE for weekend and FALSE for weekdays
-```{r}
+
+```r
 actFullData <- transform(actFullData, isWeekend=as.POSIXlt(date)$wday %in% c(0, 6))
 ```
    We then aggregate means of steps factored by both interval and weekend/weekdays variables.
-```{r}
+
+```r
 actFullDataByIntervalDay <- aggregate(actFullData$steps,
                                       by = list(actFullData$interval, actFullData$isWeekend),
                                       FUN = mean)
@@ -168,10 +250,13 @@ names(actFullDataByIntervalDay) <- c("interval","isWeekend","steps")
 ```
  2. Making a panel plot.
  Finally, we plot the average (mean) number of steps by intervals on weekends (marked as TRUE) and        weekdays (marked as FALSE)
-```{r}
+
+```r
 library(lattice)
 xyplot(steps ~ interval|isWeekend, data = actFullDataByIntervalDay,
        type = "l", layout=c(1, 2),
        main = "Average Steps by Interval and Weekend (TRUE) / Weekday(FALSE)",
        xlab = "Interval", ylab = "Average Steps (mean)")
 ```
+
+![](PA1_template_files/figure-html/unnamed-chunk-21-1.png) 
