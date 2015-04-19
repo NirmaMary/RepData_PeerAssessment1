@@ -65,7 +65,7 @@ SamData
 ```
 ## What is mean total number of steps taken per day?
 We'll aggregate sums of steps, save them into a separate data frame factored by date  
-  1. Calculate the total Number of steps taken per day.
+  Calculate the total Number of steps taken per day.
 
 ```r
 ## Aggregate sums of steps per each day into a different data frame
@@ -81,7 +81,7 @@ head(actDataByMonth,3)
 ## 2 2012-10-02   126
 ## 3 2012-10-03 11352
 ```
-  2. Make a histogram of the total number of steps taken each day
+  Make a histogram of the total number of steps taken each day
 
 ```r
 ## Making a histogram of the total number of steps taken each day
@@ -96,7 +96,7 @@ ggplot(actDataByMonth, aes(x = date, y = steps)) +
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
 
-  3. Calculate and report the mean and median total number of steps taken per day.  
+  Calculate and report the mean and median total number of steps taken per day.  
 Mean of total number of steps taken per day. Also visible on the graph as dotted line.
 
 ```r
@@ -117,7 +117,7 @@ median(actDataByMonth$steps)
 ```
 ## What is the average daily activity pattern?
 
-  1. Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+  Make a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
      We'll start by aggregating means of steps taken factored by Intervals with empty values dropped.
 
@@ -140,7 +140,7 @@ ggplot(actDataByInterval, aes(x = interval, y = steps)) +
 
 ![](PA1_template_files/figure-html/unnamed-chunk-9-1.png) 
  
- 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+ Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 ```r
 ## Find the Index of the Max Average Steps
@@ -159,7 +159,7 @@ actDataByInterval[maxSteps, ]
 ```
 
 ## Imputing missing values
-1. Calculate and report the total number of missing values in the dataset.
+  Calculate and report the total number of missing values in the dataset.
 
 ```r
 ## Check if steps is NA and save an index if it is
@@ -172,7 +172,7 @@ length(missingValues)
 ```
 ## [1] 2304
 ```
-2. & 3. Questions.
+  Questions Two and Three.
 Then we copy a dataset into a placeholder that, is used for filling in for missing values
 
 ```r
@@ -195,7 +195,7 @@ actFullDataByMonth <- aggregate(actFullData$steps, by = list(actFullData$date),
 ## set names for columns
 names(actFullDataByMonth) <- c("date", "steps")
 ```
- 4. Make a histogram of the total number of steps taken each day
+  Make a histogram of the total number of steps taken each day
 
 ```r
 ## Making a histogram of the total number of steps taken each day
@@ -233,7 +233,7 @@ median(actFullDataByMonth$steps)
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
-1, Create a new factor variable, as boolean 
+  Create a new factor variable, as boolean 
    First we transform the full dataset to include a new boolean factor variable. weekend is TRUE for weekend and FALSE for weekdays
 
 ```r
@@ -248,7 +248,7 @@ actFullDataByIntervalDay <- aggregate(actFullData$steps,
 ## Name columns
 names(actFullDataByIntervalDay) <- c("interval","isWeekend","steps")
 ```
- 2. Making a panel plot.
+  Making a panel plot.
  Finally, we plot the average (mean) number of steps by intervals on weekends (marked as TRUE) and        weekdays (marked as FALSE)
 
 ```r
